@@ -1715,8 +1715,123 @@ FIN DEL FORMULARIO
     window.location.href = `mailto:sarauter@gmail.com?subject=${subject}&body=${bodyEncoded}`;
   }
 
+  // ── LOCAL STORAGE — AUTO SAVE & RESTORE ──
+  const STORAGE_KEY = 'ladx_form_data';
+
+  // All field IDs to persist
+  const ALL_FIELDS = [
+    'hero_super','hero_sub','hero_cta1','hero_cta2',
+    'ind_asn','ind_puertos','ind_capacidad','ind_paises','ind_update',
+    'srv1_home','srv2_home','srv3_home','srv4_home',
+    'about_titulo','about_body',
+    'hist_año','hist_año_ladx','hist_hitos','hist_desc',
+    'p1','p2','p3','p4','p5',
+    'diferenciador','everything',
+    'srv1_desc','srv1_cliente','srv1_ventajas',
+    'srv2_desc','srv2_clouds','srv2_cliente','srv2_ventajas',
+    'srv3_desc','srv3_tipos','srv3_cliente','srv3_ventajas',
+    'srv4_desc','srv4_componentes','srv4_ventajas',
+    'cl_ciudades','cl_dc','cl_asn','cl_puertos','cl_capacidad','cl_nodos','cl_contacto',
+    'pe_ciudades','pe_dc','pe_asn','pe_puertos','pe_capacidad','pe_contacto',
+    'ar_ciudades','ar_dc','ar_asn','ar_puertos','ar_capacidad','ar_contacto',
+    'mx_ciudades','mx_dc','mx_asn','mx_puertos','mx_capacidad','mx_contacto',
+    'us_ciudades','us_dc','us_asn','us_puertos','us_capacidad','us_contacto',
+    'ev1_nombre','ev1_fecha','ev1_lugar','ev1_url','ev1_desc',
+    'ev2_nombre','ev2_fecha','ev2_lugar','ev2_url',
+    'hist_ev_migrar','ev_notas',
+    'news1_titulo','news1_resumen','news1_body',
+    'news2_titulo','news2_resumen',
+    'news3_titulo','news3_resumen',
+    'corp_email','corp_tel','corp_dir','corp_linkedin',
+    'cnt_cl','cnt_pe','cnt_ar','cnt_mx','cnt_us',
+    'form_email','form_campos','form_confirm'
+  ];
+
+  function saveToStorage() {
+    const data = {};
+    ALL_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function restoreFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      ALL_FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && data[id] !== undefined) {
+          el.value = data[id];
+          // Re-trigger char counters
+          if (el.oninput) el.oninput();
+        }
+      });
+      showSavedBanner();
+    } catch(e) {}
+  }
+
+  // Auto-save on any input — debounced 800ms
+  let saveTimer;
+  function scheduleAutoSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveToStorage();
+      showSavedIndicator();
+    }, 800);
+  }
+
+  // Attach auto-save to all fields
+  function attachAutoSave() {
+    ALL_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', scheduleAutoSave);
+        el.addEventListener('change', scheduleAutoSave);
+      }
+    });
+  }
+
+  // Visual feedback — saved indicator in header
+  function showSavedIndicator() {
+    let ind = document.getElementById('save-indicator');
+    if (!ind) {
+      ind = document.createElement('span');
+      ind.id = 'save-indicator';
+      ind.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.6);margin-left:16px;transition:opacity 0.5s;';
+      document.querySelector('.header-meta').appendChild(ind);
+    }
+    ind.textContent = '✓ Guardado automáticamente';
+    ind.style.opacity = '1';
+    setTimeout(() => { ind.style.opacity = '0'; }, 2500);
+  }
+
+  // Banner when restoring saved data
+  function showSavedBanner() {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#003579;color:#fff;padding:14px 20px;border-radius:8px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:999;display:flex;align-items:center;gap:12px;';
+    banner.innerHTML = '💾 <span>Se recuperó tu progreso guardado anteriormente.</span><button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;">OK</button>';
+    document.body.appendChild(banner);
+    setTimeout(() => { if(banner.parentElement) banner.remove(); }, 5000);
+  }
+
+  // Clear storage after sending
+  const origSendEmail = sendEmail;
+  function sendEmail() {
+    origSendEmail();
+    setTimeout(() => {
+      if (confirm('¿Deseas borrar los datos guardados localmente ahora que has enviado el formulario?')) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }, 1000);
+  }
+
   // Init
   updateProgress();
+  attachAutoSave();
+  restoreFromStorage();
 </script>
 </body>
 </html>
