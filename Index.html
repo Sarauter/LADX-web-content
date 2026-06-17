@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LADX — Formulario de Contenido Web</title>
+<style>
+  :root {
+    --azul-oscuro: #003579;
+    --azul-medio: #034ea2;
+    --azul-claro: #0090c5;
+    --naranja: #f26522;
+    --gris-fondo: #f4f6f9;
+    --gris-borde: #dde2ea;
+    --gris-texto: #555770;
+    --texto-dark: #1a1a2e;
+    --blanco: #ffffff;
+    --verde: #22c55e;
+    --rojo: #ef4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gris-fondo);
+    color: var(--texto-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--azul-oscuro);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+
+  .site-header .logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--blanco);
+    letter-spacing: -0.5px;
+  }
+
+  .site-header .logo span { color: var(--naranja); }
+
+  .header-meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* ── INTRO BANNER ── */
+  .intro-banner {
+    background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+    padding: 40px;
+    color: var(--blanco);
+  }
+
+  .intro-banner h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .intro-banner p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    max-width: 680px;
+    line-height: 1.6;
+  }
+
+  .intro-banner .tags {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .tag.orange { background: var(--naranja); border-color: var(--naranja); color: #fff; }
+
+  /* ── PROGRESS ── */
+  .progress-bar-wrap {
+    background: var(--azul-oscuro);
+    padding: 0 40px 16px;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--naranja);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  /* ── LAYOUT ── */
+  .app-body {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 72px;
+    height: calc(100vh - 72px);
+    overflow-y: auto;
+    background: var(--blanco);
+    border-right: 1px solid var(--gris-borde);
+    padding: 24px 0;
+  }
+
+  .sidebar-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gris-texto);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0 20px 12px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--gris-texto);
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    user-select: none;
+  }
+
+  .nav-item:hover { background: var(--gris-fondo); color: var(--azul-medio); }
+
+  .nav-item.active {
+    background: #eef3fc;
+    color: var(--azul-medio);
+    border-left-color: var(--azul-medio);
+    font-weight: 600;
+  }
+
+  .nav-item.completed { color: var(--verde); }
+  .nav-item.completed .nav-dot { background: var(--verde); }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gris-borde);
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .nav-item.active .nav-dot { background: var(--azul-medio); }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    flex: 1;
+    padding: 32px 40px;
+    min-width: 0;
+  }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--gris-borde);
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--naranja);
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--azul-oscuro);
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--gris-texto);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  /* ── BLOCKS ── */
+  .block {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .block-header {
+    padding: 16px 20px;
+    background: var(--gris-fondo);
+    border-bottom: 1px solid var(--gris-borde);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .block-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--azul-oscuro);
+    color: var(--blanco);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .block-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--azul-oscuro);
+  }
+
+  .block-subtitle {
+    font-size: 12px;
+    color: var(--gris-texto);
+    margin-top: 1px;
+  }
+
+  .optional-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--gris-texto);
+    background: var(--gris-borde);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .block-body { padding: 20px; }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--azul-oscuro);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .field .hint {
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-bottom: 6px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gris-borde);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--texto-dark);
+    background: var(--blanco);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--azul-medio);
+    box-shadow: 0 0 0 3px rgba(3,78,162,0.1);
+  }
+
+  .field textarea { min-height: 90px; }
+  .field textarea.tall { min-height: 140px; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* ── CHAR COUNTER ── */
+  .char-hint {
+    font-size: 11px;
+    color: var(--gris-texto);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  .char-hint.warn { color: var(--naranja); }
+  .char-hint.over { color: var(--rojo); }
+
+  /* ── DIVIDER ── */
+  .field-divider {
+    border: none;
+    border-top: 1px dashed var(--gris-borde);
+    margin: 18px 0;
+  }
+
+  /* ── COUNTRY TABS (Red section) ── */
+  .country-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .country-tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--gris-borde);
+    background: var(--blanco);
+    color: var(--gris-texto);
+    transition: all 0.15s;
+  }
+
+  .country-tab.active {
+    background: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+    color: var(--blanco);
+  }
+
+  .country-panel { display: none; }
+  .country-panel.active { display: block; }
+
+  /* ── NAV BUTTONS ── */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--gris-borde);
+  }
+
+  .btn {
+    padding: 11px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    font-family: inherit;
+  }
+
+  .btn-primary {
+    background: var(--azul-oscuro);
+    color: var(--blanco);
+  }
+
+  .btn-primary:hover { background: var(--azul-medio); }
+
+  .btn-secondary {
+    background: var(--blanco);
+    color: var(--gris-texto);
+    border: 1.5px solid var(--gris-borde);
+  }
+
+  .btn-secondary:hover { border-color: var(--azul-medio); color: var(--azul-medio); }
+
+  .btn-send {
+    background: var(--naranja);
+    color: var(--blanco);
+    padding: 13px 32px;
+    font-size: 15px;
+  }
+
+  .btn-send:hover { background: #d4541a; }
+
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── SEND PANEL ── */
+  .send-panel {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .send-panel .send-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .send-panel h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--azul-oscuro);
+    margin-bottom: 10px;
+  }
+
+  .send-panel p {
+    font-size: 14px;
+    color: var(--gris-texto);
+    max-width: 480px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  .send-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  .summary-card {
+    background: var(--gris-fondo);
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+
+  .summary-card .s-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--gris-texto);
+    margin-bottom: 4px;
+  }
+
+  .summary-card .s-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--azul-oscuro);
+  }
+
+  .summary-card.done .s-value { color: var(--verde); }
+  .summary-card.pending .s-value { color: var(--naranja); }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: #eef3fc;
+    border: 1px solid #c3d4f5;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--azul-medio);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .info-box strong { color: var(--azul-oscuro); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .app-body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--gris-borde); padding: 12px 0; }
+    .nav-item { padding: 8px 16px; }
+    .main-content { padding: 20px; }
+    .field-row { grid-template-columns: 1fr; }
+    .field-row.three { grid-template-columns: 1fr; }
+    .send-summary { grid-template-columns: 1fr 1fr; }
+    .intro-banner { padding: 24px 20px; }
+    .site-header { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo">LADX<span>.</span></div>
+  <div class="header-meta">
+    Formulario de contenido web<br>
+    ladx.net — Confidencial
+  </div>
+</header>
+
+<!-- INTRO BANNER -->
+<div class="intro-banner">
+  <h1>Contenido para el nuevo website de LADX</h1>
+  <p>Complete la información de cada sección. No es necesario hacerlo todo de una vez — puede guardar y continuar. Cuando esté listo, envíe el formulario completo y el contenido llegará directamente al equipo de SARAUTER Marketing.</p>
+  <div class="tags">
+    <span class="tag orange">ladx.net</span>
+    <span class="tag">WordPress</span>
+    <span class="tag">ES / EN</span>
+    <span class="tag">7 secciones</span>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 de 7 secciones completadas</div>
+</div>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-title">Secciones</div>
+    <div class="nav-item active" onclick="goTo(0)" id="nav-0">
+      <div class="nav-dot"></div> Home
+    </div>
+    <div class="nav-item" onclick="goTo(1)" id="nav-1">
+      <div class="nav-dot"></div> Qué es LADX
+    </div>
+    <div class="nav-item" onclick="goTo(2)" id="nav-2">
+      <div class="nav-dot"></div> Servicios
+    </div>
+    <div class="nav-item" onclick="goTo(3)" id="nav-3">
+      <div class="nav-dot"></div> Red
+    </div>
+    <div class="nav-item" onclick="goTo(4)" id="nav-4">
+      <div class="nav-dot"></div> Eventos
+    </div>
+    <div class="nav-item" onclick="goTo(5)" id="nav-5">
+      <div class="nav-dot"></div> Noticias
+    </div>
+    <div class="nav-item" onclick="goTo(6)" id="nav-6">
+      <div class="nav-dot"></div> Conectarse
+    </div>
+    <div class="nav-item" onclick="goTo(7)" id="nav-7">
+      <div class="nav-dot"></div> Enviar
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 0 — HOME
+    ═══════════════════════════════════════════ -->
+    <div class="section active" id="section-0">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 01</div>
+        <h2 class="section-title">Home — Página de inicio</h2>
+        <p class="section-desc">El contenido principal que verá cualquier visitante al llegar a ladx.net. Céntrese en mensajes claros y directos — el equipo de diseño se encarga del resto.</p>
+      </div>
+
+      <!-- HERO -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">1</div>
+          <div>
+            <div class="block-title">Hero — Primera pantalla</div>
+            <div class="block-subtitle">Lo primero que ve el visitante</div>
+          </div>
+        </div>
+        <div class="block-body">
+          <div class="info-box">El tagline <strong>"Everything exchangeable."</strong> ya está definido como parte de la identidad de marca. Los campos de abajo son el copy que acompaña al hero.</div>
+          <div class="field">
+            <label>Supertítulo (sobre el H1)</label>
+            <div class="hint">Línea pequeña encima del título. Ejemplo: "Latin America Digital Exchange"</div>
+            <input type="text" id="hero_super" placeholder="Ej: Latin America Digital Exchange" oninput="updateChar(this, 60)">
+            <div class="char-hint" id="char_hero_super">0 / 60 caracteres</div>
+          </div>
+          <div class="field">
+            <label>Subtítulo del hero</label>
+            <div class="hint">Una frase que expande el tagline. Máx. 120 caracteres. Ejemplo: "La plataforma de intercambio digital de América Latina."</div>
+            <input type="text" id="hero_sub" placeholder="Ej: La plataforma de intercambio digital de América Latina." oninput="updateChar(this, 120)">
+            <div class="char-hint" id="char_hero_sub">0 / 120 caracteres</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Texto del botón principal (CTA)</label>
+              <input type="text" id="hero_cta1" placeholder="Ej: Conéctate a LADX" oninput="updateChar(this, 30)">
+              <div class="char-hint" id="char_hero_cta1">0 / 30 caracteres</div>
+            </div>
+            <div class="field">
+              <label>Texto del enlace secundario (CTA)</label>
+              <input type="text" id="hero_cta2" placeholder="Ej: Conoce la red →" oninput="updateChar(this, 30)">
+              <div class="char-hint" id="char_hero_cta2">0 / 30 caracteres</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INDICADORES -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">2</div>
+          <div>
+            <div class="block-title">Indicadores de red en tiempo real</div>
+            <div class="block-subtitle">4 cifras que aparecen bajo el hero</div>
+          </div>
+        </div>
+        <div class="block-body">
+          <div class="info-box">Estos valores aparecen automáticamente en el sitio. <strong>Confirme o corrija los datos actuales</strong> de PIT Chile que se migrarán a LADX.</div>
+          <div class="field-row two" style="grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;">
+            <div class="field">
+              <label>ASNs activos</label>
+              <input type="text" id="ind_asn" placeholder="Ej: 151">
+            </div>
+            <div class="field">
+              <label>Puertos</label>
+              <input type="text" id="ind_puertos" placeholder="Ej: 368">
+            </div>
+            <div class="field">
+              <label>Capacidad total</label>
+              <input type="text" id="ind_capacidad" placeholder="Ej: 30.6 Tbps">
+            </div>
+            <div class="field">
+              <label>Países</label>
+              <input type="text" id="ind_paises" placeholder="Ej: 5">
+            </div>
+          </div>
+          <div class="field">
+            <label>¿Los indicadores se actualizarán en tiempo real o manualmente?</label>
+            <select id="ind_update">
+              <option value="">— Seleccione —</option>
+              <option value="realtime">Tiempo real (vía API de red)</option>
+              <option value="manual">Manualmente (actualización periódica)</option>
+              <option value="mixed">Mixto (algunos automáticos, otros manuales)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICIOS HOME -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">3</div>
+          <div>
+            <div class="block-title">Servicios — Resumen en Home</div>
+            <div class="block-subtitle">4 tarjetas con descripción breve</div>
+          </div>
+        </div>
+        <div class="block-body">
+          <div class="info-box">Los nombres de los servicios ya están definidos. Complete la <strong>descripción breve</strong> que aparecerá en cada tarjeta en la home (máx. 120 caracteres por tarjeta).</div>
+          <div class="field">
+            <label>Peering / Internet Exchange — descripción breve</label>
+            <input type="text" id="srv1_home" placeholder="Ej: Interconexión directa entre redes. El origen de todo." oninput="updateChar(this,120)">
+            <div class="char-hint" id="char_srv1_home">0 / 120</div>
+          </div>
+          <div class="field">
+            <label>Cloud Exchange — descripción breve</label>
+            <input type="text" id="srv2_home" placeholder="Ej: Acceso directo a los grandes proveedores de nube desde la red." oninput="updateChar(this,120)">
+            <div class="char-hint" id="char_srv2_home">0 / 120</div>
+          </div>
+          <div class="field">
+            <label>Colocation — descripción breve</label>
+            <input type="text" id="srv3_home" placeholder="Ej: Infraestructura física en nuestros nodos regionales." oninput="updateChar(this,120)">
+            <div class="char-hint" id="char_srv3_home">0 / 120</div>
+          </div>
+          <div class="field">
+            <label>Ecosistema Digital — descripción breve</label>
+            <input type="text" id="srv4_home" placeholder="Ej: Datos, plataformas, seguridad — las nuevas capas del intercambio." oninput="updateChar(this,120)">
+            <div class="char-hint" id="char_srv4_home">0 / 120</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NARRATIVA HOME -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">4</div>
+          <div>
+            <div class="block-title">Franja narrativa "Quiénes somos"</div>
+            <div class="block-subtitle">Bloque de la historia de LADX en la home</div>
+          </div>
+          <span class="optional-badge">opcional</span>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>Título de la franja</label>
+            <div class="hint">Ej: "De punto de intercambio a plataforma de valor digital." — puede dejarse en blanco si prefiere que SARAUTER lo proponga.</div>
+            <input type="text" id="about_titulo" placeholder="Ej: De punto de intercambio a plataforma de valor digital.">
+          </div>
+          <div class="field">
+            <label>Texto principal (2-3 líneas)</label>
+            <div class="hint">Resumen de la evolución PIT → LADX. Sin tecnicismos. Lenguaje de propósito. Máx. 300 caracteres.</div>
+            <textarea id="about_body" class="tall" placeholder="Ej: Durante 10 años construimos la red de intercambio digital más importante de América Latina. Hoy damos un paso más: LADX es la plataforma donde redes, nubes y ecosistemas convergen sin barreras." oninput="updateChar(this, 300)"></textarea>
+            <div class="char-hint" id="char_about_body">0 / 300</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" disabled>← Anterior</button>
+        <button class="btn btn-primary" onclick="goTo(1)">Siguiente: Qué es LADX →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 1 — QUÉ ES LADX
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-1">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 02</div>
+        <h2 class="section-title">Qué es LADX</h2>
+        <p class="section-desc">La página de historia, principios y diferenciadores. Es donde el prospecto profundiza después del primer impacto.</p>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">1</div>
+          <div><div class="block-title">Historia y evolución</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>Año de fundación de PIT Chile</label>
+            <input type="text" id="hist_año" placeholder="Ej: 2014">
+          </div>
+          <div class="field">
+            <label>Año del cambio a LADX</label>
+            <input type="text" id="hist_año_ladx" placeholder="Ej: 2026">
+          </div>
+          <div class="field">
+            <label>Hitos clave de la organización (para el timeline)</label>
+            <div class="hint">Liste los momentos más importantes. Uno por línea. Ej: "2014 — Fundación de PIT Chile en Santiago"</div>
+            <textarea id="hist_hitos" class="tall" placeholder="2014 — Fundación de PIT Chile&#10;2016 — Primer nodo en Concepción&#10;2020 — Expansión a Perú&#10;2026 — Transformación a LADX"></textarea>
+          </div>
+          <div class="field">
+            <label>Descripción de la evolución (párrafo libre)</label>
+            <div class="hint">En sus propias palabras, ¿qué representa el cambio de PIT Chile a LADX? Máx. 500 caracteres.</div>
+            <textarea id="hist_desc" class="tall" oninput="updateChar(this, 500)"></textarea>
+            <div class="char-hint" id="char_hist_desc">0 / 500</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">2</div>
+          <div><div class="block-title">Principios de marca</div></div>
+        </div>
+        <div class="block-body">
+          <div class="info-box">Los 5 principios ya están definidos. Si desea agregar una descripción corta a cada uno para la página web, complételos aquí.</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Neutralidad</label>
+              <input type="text" id="p1" placeholder="Descripción breve (opcional)">
+            </div>
+            <div class="field">
+              <label>Apertura</label>
+              <input type="text" id="p2" placeholder="Descripción breve (opcional)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Resiliencia</label>
+              <input type="text" id="p3" placeholder="Descripción breve (opcional)">
+            </div>
+            <div class="field">
+              <label>Confianza</label>
+              <input type="text" id="p4" placeholder="Descripción breve (opcional)">
+            </div>
+          </div>
+          <div class="field">
+            <label>Transparencia</label>
+            <input type="text" id="p5" placeholder="Descripción breve (opcional)">
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">3</div>
+          <div><div class="block-title">Diferenciador central</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>¿Por qué LADX y no la competencia? (en sus propias palabras)</label>
+            <div class="hint">Piense en lo que un cliente potencial le preguntaría. Máx. 400 caracteres.</div>
+            <textarea id="diferenciador" oninput="updateChar(this, 400)"></textarea>
+            <div class="char-hint" id="char_diferenciador">0 / 400</div>
+          </div>
+          <div class="field">
+            <label>¿Qué significa "Everything exchangeable" para LADX?</label>
+            <div class="hint">Explíquelo en sus términos — esto ayudará a escribir el copy definitivo.</div>
+            <textarea id="everything" oninput="updateChar(this, 400)"></textarea>
+            <div class="char-hint" id="char_everything">0 / 400</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(0)">← Home</button>
+        <button class="btn btn-primary" onclick="goTo(2)">Siguiente: Servicios →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 2 — SERVICIOS
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-2">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 03</div>
+        <h2 class="section-title">Servicios</h2>
+        <p class="section-desc">Cada servicio tiene su propia página. Complete la información detallada de cada uno.</p>
+      </div>
+
+      <!-- PEERING -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">A</div>
+          <div><div class="block-title">Peering / Internet Exchange</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>Descripción completa del servicio</label>
+            <div class="hint">Para la página propia del servicio. Lenguaje técnico-comercial. Máx. 600 caracteres.</div>
+            <textarea id="srv1_desc" class="tall" oninput="updateChar(this, 600)"></textarea>
+            <div class="char-hint" id="char_srv1_desc">0 / 600</div>
+          </div>
+          <div class="field">
+            <label>¿A quién va dirigido? (perfil del cliente)</label>
+            <input type="text" id="srv1_cliente" placeholder="Ej: ISPs, operadores de red, proveedores de contenido, empresas con tráfico propio">
+          </div>
+          <div class="field">
+            <label>Ventajas clave (hasta 4, una por línea)</label>
+            <textarea id="srv1_ventajas" placeholder="Latencia reducida&#10;Redundancia de red&#10;Acceso neutro sin costes de tránsito&#10;Comunidad técnica activa"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOUD -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">B</div>
+          <div><div class="block-title">Cloud Exchange</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>Descripción completa del servicio</label>
+            <textarea id="srv2_desc" class="tall" oninput="updateChar(this, 600)"></textarea>
+            <div class="char-hint" id="char_srv2_desc">0 / 600</div>
+          </div>
+          <div class="field">
+            <label>Proveedores de nube con los que conectan actualmente</label>
+            <input type="text" id="srv2_clouds" placeholder="Ej: AWS, Azure, Google Cloud, Oracle...">
+          </div>
+          <div class="field">
+            <label>¿A quién va dirigido?</label>
+            <input type="text" id="srv2_cliente" placeholder="Ej: Empresas con workloads en nube, data centers, integradores">
+          </div>
+          <div class="field">
+            <label>Ventajas clave (hasta 4, una por línea)</label>
+            <textarea id="srv2_ventajas"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLOCATION -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">C</div>
+          <div><div class="block-title">Colocation</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>Descripción completa del servicio</label>
+            <textarea id="srv3_desc" class="tall" oninput="updateChar(this, 600)"></textarea>
+            <div class="char-hint" id="char_srv3_desc">0 / 600</div>
+          </div>
+          <div class="field">
+            <label>Tipos de espacio disponible</label>
+            <input type="text" id="srv3_tipos" placeholder="Ej: Rack completo, espacio parcial, jaula privada">
+          </div>
+          <div class="field">
+            <label>¿A quién va dirigido?</label>
+            <input type="text" id="srv3_cliente" placeholder="">
+          </div>
+          <div class="field">
+            <label>Ventajas clave (hasta 4)</label>
+            <textarea id="srv3_ventajas"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ECOSISTEMA -->
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">D</div>
+          <div><div class="block-title">Ecosistema Digital</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>Descripción completa del servicio</label>
+            <textarea id="srv4_desc" class="tall" oninput="updateChar(this, 600)"></textarea>
+            <div class="char-hint" id="char_srv4_desc">0 / 600</div>
+          </div>
+          <div class="field">
+            <label>¿Qué incluye actualmente? (componentes del ecosistema)</label>
+            <textarea id="srv4_componentes" placeholder="Ej: Servicios de seguridad, CDN, plataformas de datos, partners tecnológicos..."></textarea>
+          </div>
+          <div class="field">
+            <label>Ventajas clave (hasta 4)</label>
+            <textarea id="srv4_ventajas"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(1)">← Qué es LADX</button>
+        <button class="btn btn-primary" onclick="goTo(3)">Siguiente: Red →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 3 — RED
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-3">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 04</div>
+        <h2 class="section-title">Red — Presencia por país</h2>
+        <p class="section-desc">Cada país tiene su propia subpágina con datos locales. Complete la información de cada nodo.</p>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">🌎</div>
+          <div><div class="block-title">Datos por país</div></div>
+        </div>
+        <div class="block-body">
+          <div class="country-tabs">
+            <div class="country-tab active" onclick="switchCountry('cl', this)">🇨🇱 Chile</div>
+            <div class="country-tab" onclick="switchCountry('pe', this)">🇵🇪 Perú</div>
+            <div class="country-tab" onclick="switchCountry('ar', this)">🇦🇷 Argentina</div>
+            <div class="country-tab" onclick="switchCountry('mx', this)">🇲🇽 México</div>
+            <div class="country-tab" onclick="switchCountry('us', this)">🇺🇸 USA</div>
+          </div>
+
+          <!-- CHILE -->
+          <div class="country-panel active" id="panel-cl">
+            <div class="field">
+              <label>Ciudad(es) con presencia activa</label>
+              <input type="text" id="cl_ciudades" placeholder="Ej: Santiago, Concepción, Temuco">
+            </div>
+            <div class="field">
+              <label>Nombre del datacenter / instalación principal</label>
+              <input type="text" id="cl_dc" placeholder="Ej: Badajoz 45, Las Condes, Santiago">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>ASNs en este nodo</label>
+                <input type="text" id="cl_asn" placeholder="Ej: 98">
+              </div>
+              <div class="field">
+                <label>Puertos activos</label>
+                <input type="text" id="cl_puertos" placeholder="Ej: 210">
+              </div>
+              <div class="field">
+                <label>Capacidad</label>
+                <input type="text" id="cl_capacidad" placeholder="Ej: 18 Tbps">
+              </div>
+            </div>
+            <div class="field">
+              <label>Nodos secundarios en Chile (uno por línea)</label>
+              <textarea id="cl_nodos" placeholder="Concepción — Datacenter XYZ&#10;Temuco — Datacenter ABC"></textarea>
+            </div>
+            <div class="field">
+              <label>Contacto local</label>
+              <input type="text" id="cl_contacto" placeholder="Ej: chile@ladx.net / +56 2 XXXX XXXX">
+            </div>
+          </div>
+
+          <!-- PERÚ -->
+          <div class="country-panel" id="panel-pe">
+            <div class="field">
+              <label>Ciudad(es) con presencia activa</label>
+              <input type="text" id="pe_ciudades" placeholder="Ej: Lima">
+            </div>
+            <div class="field">
+              <label>Nombre del datacenter / instalación principal</label>
+              <input type="text" id="pe_dc" placeholder="">
+            </div>
+            <div class="field-row">
+              <div class="field"><label>ASNs</label><input type="text" id="pe_asn"></div>
+              <div class="field"><label>Puertos</label><input type="text" id="pe_puertos"></div>
+              <div class="field"><label>Capacidad</label><input type="text" id="pe_capacidad"></div>
+            </div>
+            <div class="field">
+              <label>Contacto local</label>
+              <input type="text" id="pe_contacto" placeholder="Ej: peru@ladx.net">
+            </div>
+          </div>
+
+          <!-- ARGENTINA -->
+          <div class="country-panel" id="panel-ar">
+            <div class="field">
+              <label>Ciudad(es) con presencia activa</label>
+              <input type="text" id="ar_ciudades" placeholder="Ej: Buenos Aires">
+            </div>
+            <div class="field">
+              <label>Nombre del datacenter / instalación principal</label>
+              <input type="text" id="ar_dc" placeholder="">
+            </div>
+            <div class="field-row">
+              <div class="field"><label>ASNs</label><input type="text" id="ar_asn"></div>
+              <div class="field"><label>Puertos</label><input type="text" id="ar_puertos"></div>
+              <div class="field"><label>Capacidad</label><input type="text" id="ar_capacidad"></div>
+            </div>
+            <div class="field">
+              <label>Contacto local</label>
+              <input type="text" id="ar_contacto" placeholder="Ej: argentina@ladx.net">
+            </div>
+          </div>
+
+          <!-- MÉXICO -->
+          <div class="country-panel" id="panel-mx">
+            <div class="field">
+              <label>Ciudad(es) con presencia activa</label>
+              <input type="text" id="mx_ciudades" placeholder="Ej: Ciudad de México">
+            </div>
+            <div class="field">
+              <label>Nombre del datacenter / instalación principal</label>
+              <input type="text" id="mx_dc" placeholder="">
+            </div>
+            <div class="field-row">
+              <div class="field"><label>ASNs</label><input type="text" id="mx_asn"></div>
+              <div class="field"><label>Puertos</label><input type="text" id="mx_puertos"></div>
+              <div class="field"><label>Capacidad</label><input type="text" id="mx_capacidad"></div>
+            </div>
+            <div class="field">
+              <label>Contacto local</label>
+              <input type="text" id="mx_contacto" placeholder="Ej: mexico@ladx.net">
+            </div>
+          </div>
+
+          <!-- USA -->
+          <div class="country-panel" id="panel-us">
+            <div class="field">
+              <label>Ciudad(es) con presencia activa</label>
+              <input type="text" id="us_ciudades" placeholder="Ej: Miami, Nueva York">
+            </div>
+            <div class="field">
+              <label>Nombre del datacenter / instalación principal</label>
+              <input type="text" id="us_dc" placeholder="">
+            </div>
+            <div class="field-row">
+              <div class="field"><label>ASNs</label><input type="text" id="us_asn"></div>
+              <div class="field"><label>Puertos</label><input type="text" id="us_puertos"></div>
+              <div class="field"><label>Capacidad</label><input type="text" id="us_capacidad"></div>
+            </div>
+            <div class="field">
+              <label>Contacto local</label>
+              <input type="text" id="us_contacto" placeholder="Ej: usa@ladx.net">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(2)">← Servicios</button>
+        <button class="btn btn-primary" onclick="goTo(4)">Siguiente: Eventos →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 4 — EVENTOS
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-4">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 05</div>
+        <h2 class="section-title">Eventos</h2>
+        <p class="section-desc">Próximos eventos y el histórico de comunidad.</p>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">1</div>
+          <div><div class="block-title">Próximo evento destacado</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Nombre del evento</label>
+              <input type="text" id="ev1_nombre" placeholder="Ej: Neura Mare 2026">
+            </div>
+            <div class="field">
+              <label>Fecha</label>
+              <input type="text" id="ev1_fecha" placeholder="Ej: 15 de agosto de 2026">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Ciudad / País</label>
+              <input type="text" id="ev1_lugar" placeholder="Ej: Santiago, Chile">
+            </div>
+            <div class="field">
+              <label>URL de registro (si existe)</label>
+              <input type="text" id="ev1_url" placeholder="https://...">
+            </div>
+          </div>
+          <div class="field">
+            <label>Descripción breve del evento</label>
+            <textarea id="ev1_desc" placeholder="Ej: El encuentro anual de la comunidad LADX..." oninput="updateChar(this,300)"></textarea>
+            <div class="char-hint" id="char_ev1_desc">0 / 300</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">2</div>
+          <div><div class="block-title">Segundo evento próximo</div></div>
+          <span class="optional-badge">opcional</span>
+        </div>
+        <div class="block-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Nombre del evento</label>
+              <input type="text" id="ev2_nombre" placeholder="">
+            </div>
+            <div class="field">
+              <label>Fecha</label>
+              <input type="text" id="ev2_fecha" placeholder="">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Ciudad / País</label>
+              <input type="text" id="ev2_lugar" placeholder="">
+            </div>
+            <div class="field">
+              <label>URL de registro</label>
+              <input type="text" id="ev2_url" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">3</div>
+          <div><div class="block-title">Histórico de eventos para migrar</div></div>
+          <span class="optional-badge">opcional</span>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>¿Se migrará el histórico de eventos de pitchile.cl al nuevo sitio?</label>
+            <select id="hist_ev_migrar">
+              <option value="">— Seleccione —</option>
+              <option value="si">Sí, migrar todo el histórico</option>
+              <option value="reciente">Solo los últimos 2-3 años</option>
+              <option value="no">No, comenzar desde cero con LADX</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Notas adicionales sobre eventos</label>
+            <textarea id="ev_notas" placeholder="Cualquier información adicional sobre eventos..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(3)">← Red</button>
+        <button class="btn btn-primary" onclick="goTo(5)">Siguiente: Noticias →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 5 — NOTICIAS
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-5">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 06</div>
+        <h2 class="section-title">Noticias</h2>
+        <p class="section-desc">Las noticias del lanzamiento y las primeras publicaciones del sitio.</p>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">1</div>
+          <div><div class="block-title">Noticia de lanzamiento — LADX</div></div>
+        </div>
+        <div class="block-body">
+          <div class="info-box">Esta es la primera noticia que aparecerá en el sitio. Se publicará el día del lanzamiento de ladx.net.</div>
+          <div class="field">
+            <label>Titular de la noticia</label>
+            <input type="text" id="news1_titulo" placeholder="Ej: PIT Chile se transforma: nace LADX, la plataforma de intercambio digital de América Latina" oninput="updateChar(this,120)">
+            <div class="char-hint" id="char_news1_titulo">0 / 120</div>
+          </div>
+          <div class="field">
+            <label>Resumen / bajada</label>
+            <div class="hint">1-2 frases que expanden el titular. Aparece en la lista de noticias y en redes sociales.</div>
+            <textarea id="news1_resumen" oninput="updateChar(this,280)"></textarea>
+            <div class="char-hint" id="char_news1_resumen">0 / 280</div>
+          </div>
+          <div class="field">
+            <label>Contenido completo de la noticia</label>
+            <textarea id="news1_body" class="tall" placeholder="Texto completo del comunicado de lanzamiento..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">2</div>
+          <div><div class="block-title">Noticias adicionales de lanzamiento</div></div>
+          <span class="optional-badge">opcional</span>
+        </div>
+        <div class="block-body">
+          <div class="info-box">El sitio necesita al menos 2-3 noticias para que la sección no aparezca vacía. Pueden ser anuncios técnicos, expansión regional, nuevos miembros, etc.</div>
+          <div class="field">
+            <label>Noticia 2 — Titular</label>
+            <input type="text" id="news2_titulo" placeholder="">
+          </div>
+          <div class="field">
+            <label>Noticia 2 — Resumen</label>
+            <textarea id="news2_resumen"></textarea>
+          </div>
+          <hr class="field-divider">
+          <div class="field">
+            <label>Noticia 3 — Titular</label>
+            <input type="text" id="news3_titulo" placeholder="">
+          </div>
+          <div class="field">
+            <label>Noticia 3 — Resumen</label>
+            <textarea id="news3_resumen"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(4)">← Eventos</button>
+        <button class="btn btn-primary" onclick="goTo(6)">Siguiente: Conectarse →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 6 — CONECTARSE
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-6">
+      <div class="section-header">
+        <div class="section-eyebrow">Sección 07</div>
+        <h2 class="section-title">Conectarse</h2>
+        <p class="section-desc">Formulario de solicitud de conexión y datos de contacto por país.</p>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">1</div>
+          <div><div class="block-title">Información corporativa general</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field-row">
+            <div class="field">
+              <label>Email general de contacto</label>
+              <input type="email" id="corp_email" placeholder="Ej: info@ladx.net">
+            </div>
+            <div class="field">
+              <label>Teléfono general</label>
+              <input type="tel" id="corp_tel" placeholder="Ej: +56 2 XXXX XXXX">
+            </div>
+          </div>
+          <div class="field">
+            <label>Dirección de sede principal</label>
+            <input type="text" id="corp_dir" placeholder="Ej: Badajoz 45, Las Condes, Santiago, Chile">
+          </div>
+          <div class="field">
+            <label>Perfil de LinkedIn de LADX (URL)</label>
+            <input type="text" id="corp_linkedin" placeholder="https://linkedin.com/company/ladx">
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">2</div>
+          <div><div class="block-title">Contactos por país</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field-row">
+            <div class="field"><label>🇨🇱 Chile — email</label><input type="text" id="cnt_cl" placeholder="chile@ladx.net"></div>
+            <div class="field"><label>🇵🇪 Perú — email</label><input type="text" id="cnt_pe" placeholder="peru@ladx.net"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>🇦🇷 Argentina — email</label><input type="text" id="cnt_ar" placeholder="argentina@ladx.net"></div>
+            <div class="field"><label>🇲🇽 México — email</label><input type="text" id="cnt_mx" placeholder="mexico@ladx.net"></div>
+          </div>
+          <div class="field">
+            <label>🇺🇸 USA — email</label>
+            <input type="text" id="cnt_us" placeholder="usa@ladx.net" style="max-width:320px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-num">3</div>
+          <div><div class="block-title">Formulario de solicitud de conexión</div></div>
+        </div>
+        <div class="block-body">
+          <div class="field">
+            <label>¿A qué email deben llegar las solicitudes de conexión?</label>
+            <input type="email" id="form_email" placeholder="Ej: conexiones@ladx.net">
+          </div>
+          <div class="field">
+            <label>Campos que debe tener el formulario de conexión</label>
+            <div class="hint">Marque o añada los que necesita. Ej: nombre, empresa, ASN, país, tipo de servicio, mensaje.</div>
+            <textarea id="form_campos" placeholder="Nombre&#10;Empresa&#10;ASN&#10;País&#10;Servicio de interés&#10;Mensaje"></textarea>
+          </div>
+          <div class="field">
+            <label>Texto de confirmación tras enviar el formulario</label>
+            <input type="text" id="form_confirm" placeholder="Ej: Gracias por contactarnos. Nos pondremos en contacto en 48 horas hábiles.">
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(5)">← Noticias</button>
+        <button class="btn btn-primary" onclick="goTo(7)">Revisar y enviar →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 7 — ENVIAR
+    ═══════════════════════════════════════════ -->
+    <div class="section" id="section-7">
+      <div class="section-header">
+        <div class="section-eyebrow">Último paso</div>
+        <h2 class="section-title">Revisar y enviar</h2>
+        <p class="section-desc">Verifique que todo esté completo antes de enviar.</p>
+      </div>
+
+      <div class="send-panel">
+        <div class="send-icon">📨</div>
+        <h2>Todo listo para enviar</h2>
+        <p>Al hacer clic en "Enviar contenido", se abrirá su cliente de email con toda la información organizada lista para enviarse a <strong>sarauter@gmail.com</strong>. Revise el email antes de enviarlo.</p>
+
+        <div class="send-summary" id="sendSummary">
+          <div class="summary-card" id="sum-0">
+            <div class="s-label">Home</div>
+            <div class="s-value">—</div>
+          </div>
+          <div class="summary-card" id="sum-1">
+            <div class="s-label">Qué es LADX</div>
+            <div class="s-value">—</div>
+          </div>
+          <div class="summary-card" id="sum-2">
+            <div class="s-label">Servicios</div>
+            <div class="s-value">—</div>
+          </div>
+          <div class="summary-card" id="sum-3">
+            <div class="s-label">Red</div>
+            <div class="s-value">—</div>
+          </div>
+          <div class="summary-card" id="sum-4">
+            <div class="s-label">Eventos</div>
+            <div class="s-value">—</div>
+          </div>
+          <div class="summary-card" id="sum-5">
+            <div class="s-label">Noticias</div>
+            <div class="s-value">—</div>
+          </div>
+          <div class="summary-card" id="sum-6">
+            <div class="s-label">Conectarse</div>
+            <div class="s-value">—</div>
+          </div>
+        </div>
+
+        <button class="btn btn-send" onclick="sendEmail()">📧 Enviar contenido a SARAUTER</button>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo(6)">← Conectarse</button>
+        <span></span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let currentSection = 0;
+  const totalSections = 7;
+
+  // ── NAV ──
+  function goTo(idx) {
+    document.getElementById('section-' + currentSection).classList.remove('active');
+    document.getElementById('nav-' + currentSection).classList.remove('active');
+
+    currentSection = idx;
+
+    document.getElementById('section-' + idx).classList.add('active');
+    document.getElementById('nav-' + idx).classList.add('active');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateProgress();
+    if (idx === 7) updateSummary();
+  }
+
+  // ── PROGRESS ──
+  function updateProgress() {
+    const filled = currentSection;
+    const pct = Math.round((filled / totalSections) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = filled + ' de ' + totalSections + ' secciones visitadas';
+  }
+
+  // ── CHAR COUNTER ──
+  function updateChar(el, max) {
+    const id = 'char_' + el.id;
+    const hint = document.getElementById(id);
+    if (!hint) return;
+    const len = el.value.length;
+    hint.textContent = len + ' / ' + max + ' caracteres';
+    hint.className = 'char-hint' + (len > max ? ' over' : len > max * 0.85 ? ' warn' : '');
+  }
+
+  // ── COUNTRY TABS ──
+  function switchCountry(code, el) {
+    document.querySelectorAll('.country-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.country-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + code).classList.add('active');
+    el.classList.add('active');
+  }
+
+  // ── SUMMARY ──
+  function getSectionStatus(fields) {
+    const filled = fields.filter(id => {
+      const el = document.getElementById(id);
+      return el && el.value.trim().length > 0;
+    }).length;
+    return { filled, total: fields.length };
+  }
+
+  function updateSummary() {
+    const sections = [
+      { id: 0, fields: ['hero_super','hero_sub','hero_cta1','hero_cta2'] },
+      { id: 1, fields: ['hist_año','hist_desc','diferenciador'] },
+      { id: 2, fields: ['srv1_desc','srv2_desc','srv3_desc','srv4_desc'] },
+      { id: 3, fields: ['cl_ciudades','cl_dc'] },
+      { id: 4, fields: ['ev1_nombre','ev1_fecha'] },
+      { id: 5, fields: ['news1_titulo','news1_resumen'] },
+      { id: 6, fields: ['corp_email','corp_dir'] },
+    ];
+
+    sections.forEach(s => {
+      const st = getSectionStatus(s.fields);
+      const card = document.getElementById('sum-' + s.id);
+      const val = card.querySelector('.s-value');
+      if (st.filled === 0) {
+        card.className = 'summary-card pending';
+        val.textContent = 'Pendiente';
+      } else if (st.filled < st.total) {
+        card.className = 'summary-card pending';
+        val.textContent = st.filled + '/' + st.total + ' campos';
+      } else {
+        card.className = 'summary-card done';
+        val.textContent = '✓ Completo';
+      }
+    });
+  }
+
+  // ── COLLECT ALL DATA ──
+  function collectAll() {
+    const v = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+    return `
+===========================================
+LADX — CONTENIDO WEBSITE
+ladx.net | Recibido desde formulario
+===========================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+01. HOME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[HERO]
+Supertítulo: ${v('hero_super')}
+Subtítulo: ${v('hero_sub')}
+CTA principal: ${v('hero_cta1')}
+CTA secundario: ${v('hero_cta2')}
+
+[INDICADORES DE RED]
+ASNs activos: ${v('ind_asn')}
+Puertos: ${v('ind_puertos')}
+Capacidad total: ${v('ind_capacidad')}
+Países: ${v('ind_paises')}
+Actualización: ${v('ind_update')}
+
+[SERVICIOS — RESUMEN HOME]
+Peering: ${v('srv1_home')}
+Cloud Exchange: ${v('srv2_home')}
+Colocation: ${v('srv3_home')}
+Ecosistema Digital: ${v('srv4_home')}
+
+[FRANJA NARRATIVA]
+Título: ${v('about_titulo')}
+Texto: ${v('about_body')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+02. QUÉ ES LADX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[HISTORIA]
+Año de fundación PIT Chile: ${v('hist_año')}
+Año cambio a LADX: ${v('hist_año_ladx')}
+Hitos:
+${v('hist_hitos')}
+Descripción de la evolución:
+${v('hist_desc')}
+
+[PRINCIPIOS]
+Neutralidad: ${v('p1')}
+Apertura: ${v('p2')}
+Resiliencia: ${v('p3')}
+Confianza: ${v('p4')}
+Transparencia: ${v('p5')}
+
+[DIFERENCIADORES]
+Por qué LADX:
+${v('diferenciador')}
+Everything exchangeable significa:
+${v('everything')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+03. SERVICIOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[A. PEERING / INTERNET EXCHANGE]
+Descripción: ${v('srv1_desc')}
+Cliente objetivo: ${v('srv1_cliente')}
+Ventajas:
+${v('srv1_ventajas')}
+
+[B. CLOUD EXCHANGE]
+Descripción: ${v('srv2_desc')}
+Nubes conectadas: ${v('srv2_clouds')}
+Cliente objetivo: ${v('srv2_cliente')}
+Ventajas:
+${v('srv2_ventajas')}
+
+[C. COLOCATION]
+Descripción: ${v('srv3_desc')}
+Tipos de espacio: ${v('srv3_tipos')}
+Cliente objetivo: ${v('srv3_cliente')}
+Ventajas:
+${v('srv3_ventajas')}
+
+[D. ECOSISTEMA DIGITAL]
+Descripción: ${v('srv4_desc')}
+Componentes: ${v('srv4_componentes')}
+Ventajas:
+${v('srv4_ventajas')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+04. RED — PRESENCIA POR PAÍS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[CHILE]
+Ciudades: ${v('cl_ciudades')}
+Datacenter principal: ${v('cl_dc')}
+ASNs: ${v('cl_asn')} | Puertos: ${v('cl_puertos')} | Capacidad: ${v('cl_capacidad')}
+Nodos secundarios:
+${v('cl_nodos')}
+Contacto: ${v('cl_contacto')}
+
+[PERÚ]
+Ciudades: ${v('pe_ciudades')}
+Datacenter: ${v('pe_dc')}
+ASNs: ${v('pe_asn')} | Puertos: ${v('pe_puertos')} | Capacidad: ${v('pe_capacidad')}
+Contacto: ${v('pe_contacto')}
+
+[ARGENTINA]
+Ciudades: ${v('ar_ciudades')}
+Datacenter: ${v('ar_dc')}
+ASNs: ${v('ar_asn')} | Puertos: ${v('ar_puertos')} | Capacidad: ${v('ar_capacidad')}
+Contacto: ${v('ar_contacto')}
+
+[MÉXICO]
+Ciudades: ${v('mx_ciudades')}
+Datacenter: ${v('mx_dc')}
+ASNs: ${v('mx_asn')} | Puertos: ${v('mx_puertos')} | Capacidad: ${v('mx_capacidad')}
+Contacto: ${v('mx_contacto')}
+
+[USA]
+Ciudades: ${v('us_ciudades')}
+Datacenter: ${v('us_dc')}
+ASNs: ${v('us_asn')} | Puertos: ${v('us_puertos')} | Capacidad: ${v('us_capacidad')}
+Contacto: ${v('us_contacto')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+05. EVENTOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[EVENTO 1]
+Nombre: ${v('ev1_nombre')}
+Fecha: ${v('ev1_fecha')}
+Lugar: ${v('ev1_lugar')}
+URL: ${v('ev1_url')}
+Descripción: ${v('ev1_desc')}
+
+[EVENTO 2]
+Nombre: ${v('ev2_nombre')}
+Fecha: ${v('ev2_fecha')}
+Lugar: ${v('ev2_lugar')}
+URL: ${v('ev2_url')}
+
+Migración histórico: ${v('hist_ev_migrar')}
+Notas: ${v('ev_notas')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+06. NOTICIAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[NOTICIA LANZAMIENTO]
+Titular: ${v('news1_titulo')}
+Resumen: ${v('news1_resumen')}
+Contenido completo:
+${v('news1_body')}
+
+[NOTICIA 2]
+Titular: ${v('news2_titulo')}
+Resumen: ${v('news2_resumen')}
+
+[NOTICIA 3]
+Titular: ${v('news3_titulo')}
+Resumen: ${v('news3_resumen')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+07. CONECTARSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Email general: ${v('corp_email')}
+Teléfono: ${v('corp_tel')}
+Dirección sede: ${v('corp_dir')}
+LinkedIn: ${v('corp_linkedin')}
+
+Contactos por país:
+Chile: ${v('cnt_cl')}
+Perú: ${v('cnt_pe')}
+Argentina: ${v('cnt_ar')}
+México: ${v('cnt_mx')}
+USA: ${v('cnt_us')}
+
+Formulario de conexión:
+- Email destino: ${v('form_email')}
+- Campos: ${v('form_campos')}
+- Confirmación: ${v('form_confirm')}
+
+===========================================
+FIN DEL FORMULARIO
+===========================================
+    `.trim();
+  }
+
+  // ── SEND EMAIL ──
+  function sendEmail() {
+    const body = collectAll();
+    const subject = encodeURIComponent('LADX — Contenido website ladx.net');
+    const bodyEncoded = encodeURIComponent(body);
+    window.location.href = `mailto:sarauter@gmail.com?subject=${subject}&body=${bodyEncoded}`;
+  }
+
+  // Init
+  updateProgress();
+</script>
+</body>
+</html>
