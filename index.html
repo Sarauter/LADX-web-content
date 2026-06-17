@@ -1707,14 +1707,6 @@ FIN DEL FORMULARIO
     `.trim();
   }
 
-  // ── SEND EMAIL ──
-  function sendEmail() {
-    const body = collectAll();
-    const subject = encodeURIComponent('LADX — Contenido website ladx.net');
-    const bodyEncoded = encodeURIComponent(body);
-    window.location.href = `mailto:sarauter@gmail.com?subject=${subject}&body=${bodyEncoded}`;
-  }
-
   // ── LOCAL STORAGE — AUTO SAVE & RESTORE ──
   const STORAGE_KEY = 'ladx_form_data';
 
@@ -1817,12 +1809,14 @@ FIN DEL FORMULARIO
     setTimeout(() => { if(banner.parentElement) banner.remove(); }, 5000);
   }
 
-  // Clear storage after sending
-  const origSendEmail = sendEmail;
+  // ── SEND EMAIL ──
   function sendEmail() {
-    origSendEmail();
+    const body = collectAll();
+    const subject = encodeURIComponent('LADX \u2014 Contenido website ladx.net');
+    const bodyEncoded = encodeURIComponent(body);
+    window.location.href = 'mailto:sarauter@gmail.com?subject=' + subject + '&body=' + bodyEncoded;
     setTimeout(() => {
-      if (confirm('¿Deseas borrar los datos guardados localmente ahora que has enviado el formulario?')) {
+      if (confirm('\u00bfDeseas borrar los datos guardados localmente ahora que has enviado el formulario?')) {
         localStorage.removeItem(STORAGE_KEY);
       }
     }, 1000);
